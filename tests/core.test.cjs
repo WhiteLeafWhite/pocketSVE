@@ -54,3 +54,13 @@ test('corrupt or stale saved leaders are rejected; numeric values are normalized
   assert.equal(core.restoreState(state, ['1', '2']).pp, 4);
   assert.equal(core.restoreState(state, ['1']), null);
 });
+
+test('self-written Ralmia text tags select only the explicit catalog entry', () => {
+  const id = 'svgdb-2808';
+  const catalog = [{ id }];
+  const text = { tnf: 1, type: [84], payload: [2, 101, 110, ...Buffer.from('pocketsve:leader/' + id)] };
+  assert.deepEqual(core.resolveTag({ ndefMessage: [text] }, catalog), { status: 'matched', id, source: 'ndef' });
+  assert.equal(core.resolveTag({ ndefMessage: [text] }, []).status, 'unknown-card');
+  assert.equal(core.resolveTag({ ndefMessage: [text], originalCard: { cardId: '123', verified: false } }, catalog).status, 'invalid');
+  assert.equal(core.restoreState(core.initialState(id, id), [id]).players.you.leaderId, id);
+});

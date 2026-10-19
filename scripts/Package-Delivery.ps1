@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$Version = '0.3.0')
+param([string]$Version = '0.4.0')
 $ErrorActionPreference = 'Stop'
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must be major.minor.patch.' }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))

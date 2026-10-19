@@ -70,7 +70,7 @@
     $('emote-region').classList.toggle('many', items.length > 4);
     const tray = $('emote-tray');
     tray.replaceChildren(node('button', { className: 'emote-close', 'aria-label': '收起表情', onclick: () => { effect('emoteClose'); setEmotesOpen(false); } }, [node('img', { src: 'ui/emote_btn_emote_menu_l_off.png', alt: '' })]));
-    for (const item of items) tray.append(node('button', { 'aria-label': item.text || '表情' + item.icon, onclick: () => { gameToast(item.text); window.PocketAudio?.playLeader(id, 'emote', item.icon); } },
+    for (const item of items) tray.append(node('button', { 'aria-label': item.label || item.text || '表情' + item.icon, onclick: () => { gameToast(item.text); window.PocketAudio?.playLeader(id, 'emote', item.icon); } },
       [node('img', { src: 'ui/emote_btn_emote_0' + item.icon + '_off.png', alt: '' })]));
     setEmotesOpen(false);
   }
@@ -120,6 +120,25 @@
     $('leader-art').style.width = artSize + 'px';
     $('leader-art').style.height = artSize + 'px';
     $('leader-art').style.bottom = artBottom + 'px';
+    fitBackground();
+  }
+  function fitBackground() {
+    const background = $('battle-background');
+    const layout = leaderFor('you')?.backgroundLayout;
+    background.classList.toggle('anchored-background', !!layout);
+    if (!layout) {
+      for (const property of ['background-size', 'background-position', '--art-top', '--art-fade']) background.style.removeProperty(property);
+      return;
+    }
+    const stageHeight = parseFloat($('scene').style.height);
+    const imageWidth = 750 * layout.widthScale;
+    const imageHeight = imageWidth * layout.height / layout.width;
+    const left = 750 * layout.targetX - imageWidth * layout.faceX;
+    const top = stageHeight * layout.targetY - imageHeight * layout.faceY;
+    background.style.backgroundSize = imageWidth + 'px ' + imageHeight + 'px';
+    background.style.backgroundPosition = left + 'px ' + top + 'px';
+    background.style.setProperty('--art-top', top + 'px');
+    background.style.setProperty('--art-fade', Math.min(150, imageHeight * .07) + 'px');
   }
   function digits(element, value, kind) {
     element.dataset.value = String(value);
@@ -140,9 +159,10 @@
     renderEmotes();
     const image = $('leader-art');
     if (leader?.portrait && image.getAttribute('src') !== leader.portrait) image.src = leader.portrait;
-    image.hidden = !leader?.portrait;
+    image.hidden = !leader?.portrait || !!leader?.backgroundOnly;
     image.alt = safeLeaderName(leader);
     $('battle-background').style.backgroundImage = leader?.background ? 'url("' + encodeURI(leader.background).replace(/"/g, '%22') + '")' : '';
+    fitBackground();
     digits($('pp-current'), state.pp, 'pp');
     digits($('pp-max'), state.maxPp, 'max');
     $('pp-pips').replaceChildren(...Array.from({ length: 10 }, (_, index) => {
@@ -206,7 +226,7 @@
     const grid = $('leader-grid');
     if (!grid) return;
     const items = leaders.filter(item => (!activeClass || String(item.classId) === activeClass) &&
-      (!query || (item.name + ' ' + classNameFor(item) + ' ' + item.id).toLowerCase().includes(query.toLowerCase())))
+      (!query || (item.name + ' ' + (item.aliases || '') + ' ' + classNameFor(item) + ' ' + item.id).toLowerCase().includes(query.toLowerCase())))
       .sort((a, b) => Number(b.available) - Number(a.available));
     grid.replaceChildren(...items.map(item => {
       const image = item.portrait ? node('img', { src: item.portrait, alt: item.name, loading: 'lazy' }) : node('div', { className: 'unavailable-art', text: '立绘未收录' });

@@ -2,7 +2,8 @@
 
 已根据 `apks/kdyzs_1.2.0.apk` 重建离线对战界面、主战者选择和 NFC 原卡读取流程。
 
-- 最新安装包：`dist/pocketSVE-v0.3.0-debug.apk`（原版布局、角色语音和骰子动画）。
+- 最新安装包：`dist/pocketSVE-v0.4.0-debug.apk`（新增皇家护卫洛菈米亚、自定义背景及 NFC 文本卡支持）。
+- [给洛菈米亚写一张 NFC 卡](docs/NFC_WRITING.md)。
 - [功能说明、资源覆盖与验证范围](docs/REPLICA.md)。
 - [构建与 NFC 协议测试](docs/BUILD_ANDROID.md)。
 - 前端与原生源码：`app/src/main`。

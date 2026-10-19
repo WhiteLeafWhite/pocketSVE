@@ -223,6 +223,7 @@ public final class MainActivity extends Activity implements NfcAdapter.ReaderCal
         try {
             result.put("id", id).put("techTypes", new JSONArray(tag.getTechList()));
             JSONArray records = new JSONArray();
+            boolean customLeaderRecord = false;
             Ndef ndef = Ndef.get(tag);
             if (ndef != null) {
                 try {
@@ -236,6 +237,8 @@ public final class MainActivity extends Activity implements NfcAdapter.ReaderCal
                         entry.put("tnf", record.getTnf()).put("type", unsigned(record.getType()))
                                 .put("id", unsigned(record.getId())).put("payload", unsigned(record.getPayload()));
                         records.put(entry);
+                        if (PocketTagFormat.isCustomLeaderRecord(record.getTnf(), record.getType(), record.getPayload()))
+                            customLeaderRecord = true;
                     }
                 } catch (TagLostException error) { throw error; }
                 catch (IOException unavailable) { result.put("ndefError", "此标签的 NDEF 记录不可读"); }
@@ -243,7 +246,10 @@ public final class MainActivity extends Activity implements NfcAdapter.ReaderCal
             }
             result.put("ndefMessage", records);
             if (!scanRequested || !resumed || session != scanSession) return;
-            OriginalCardReader.enrich(this, tag, result);
+            // Ordinary self-written PocketSVE tags use public NDEF data, not the
+            // original game's UID-derived password. Do not send PWD_AUTH to them.
+            if (customLeaderRecord) result.put("format", "pocketsve-ndef");
+            else OriginalCardReader.enrich(this, tag, result);
             if (!scanRequested || !resumed || session != scanSession) return;
             dispatch("pocket:nfc", result);
         } catch (TagLostException error) {

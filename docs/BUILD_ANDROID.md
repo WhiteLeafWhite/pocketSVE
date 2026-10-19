@@ -1,6 +1,8 @@
 # 构建 PocketSVE Android APK
 
-当前版本 0.3.0，按原 APK 的 portrait 方向运行。交付文件为 `dist/pocketSVE-v0.3.0-debug.apk`；使用 `-OutputPath` 可保留版本化产物，默认输出仍为 `dist/pocketSVE-debug.apk`。
+当前版本 0.4.0，按原 APK 的 portrait 方向运行。交付文件为 `dist/pocketSVE-v0.4.0-debug.apk`；使用 `-OutputPath` 可保留版本化产物，默认输出仍为 `dist/pocketSVE-debug.apk`。
+
+0.4 的新增验证：`scripts/Test-NdefRouting.ps1` 检查生产 Java 的自制卡分流；`node scripts/Test-CustomLeader.mjs` 检查洛菈米亚、背景位置、语音和 NDEF 角色映射。实体 NFC 仍需要真机验证。
 
 在项目根目录执行：
 

@@ -48,3 +48,5 @@
 .ps-nfc-illustration{display:block;flex:none;width:calc(616 * var(--ps-static-px));height:calc(728 * var(--ps-static-px));object-fit:fill}
 .ps-nfc-instruction{margin:0;white-space:pre-line;text-align:center;font-size:calc(30 * var(--ps-static-px));line-height:normal;color:#f9f9f9}
 .pocket-selection-nfc .ps-nfc-close{width:calc(301 * var(--ps-static-px));height:calc(52 * var(--ps-static-px));font-size:calc(26 * var(--ps-static-px));line-height:calc(37 * var(--ps-static-px))}
+/* Custom leaders may supply a square profile instead of an original wide thumbnail. */
+.ps-leader-thumbnail.ps-custom-thumbnail{object-fit:contain;background:linear-gradient(110deg,#102038,#233b55,#102038)}

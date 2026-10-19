@@ -1,6 +1,8 @@
 /* Layout recovered from original Hermes #22654–22917. Values use the 750 design grid. */
 .scene{background:#0b1c27;min-height:0;isolation:isolate}
 .battle-background{opacity:1;background-size:auto 100%;background-repeat:no-repeat;background-position:center;z-index:0}
+.battle-background.anchored-background{background-color:#0b1027}
+.anchored-background:after{content:"";position:absolute;left:0;right:0;top:calc(var(--art-top) - 1px);height:var(--art-fade);background:linear-gradient(#0b1027,transparent);pointer-events:none}
 .leader-art{inset:auto;left:50%;top:auto;transform:translateX(-50%);object-fit:contain;object-position:center;opacity:1;z-index:1}
 .battle-content{position:absolute;left:0;right:0;bottom:0;z-index:2}
 .blood-region{position:absolute;left:24px;right:24px;height:530px;z-index:3}

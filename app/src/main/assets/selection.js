@@ -87,11 +87,12 @@
     const leader = findLeader(selected[side]);
     const skinId = String(leader && leader.skinId || selected[side]);
     // In the original only the player's NFC-selected skin replaces its class icons.
-    if (own && thumbnailIds.has(skinId) && !/^10000[0-6]$/.test(selected[side])) {
+    if (own && (leader?.thumbnail || thumbnailIds.has(skinId)) && !/^10000[0-6]$/.test(selected[side])) {
       panel.classList.add('ps-has-skin');
       const image = el('img', 'ps-leader-thumbnail');
       image.alt = leader ? leader.name : '已读取的主战者';
-      image.src = art('Class_thumbnail' + skinId + 'Png');
+      image.src = leader?.thumbnail || art('Class_thumbnail' + skinId + 'Png');
+      if (leader?.thumbnail) image.classList.add('ps-custom-thumbnail');
       panel.append(image);
       const actions = el('div', 'ps-skin-actions');
       const reset = button('ps-image-button ps-blue ps-reset-skin', '重置', () => choose('you', '100001'));

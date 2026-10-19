@@ -1,8 +1,10 @@
-# PocketSVE 0.3：原版界面、语音与骰子动画
+# PocketSVE 0.4：加入自定义主战者洛菈米亚
 
 ## 安装
 
-安装 `dist/pocketSVE-v0.3.0-debug.apk`。最低 Android 6.0，包名 `io.pocketsve.app`，可覆盖安装上一版 PocketSVE。应用不需要登录，也没有网络权限。
+安装 `dist/pocketSVE-v0.4.0-debug.apk`。最低 Android 6.0，包名 `io.pocketsve.app`，可覆盖安装上一版 PocketSVE。应用不需要登录，也没有网络权限。
+
+新增洛菈米亚（Ralmia / SVGDB 2808），按用户要求归为皇家护卫，使用用户提供的背景图。脸部固定在横向中央、纵向 64% 处，加入登场和七条表情日语语音。菜单 → 主战者收藏搜索 `2808` 即可选择；自制卡请写入 NDEF Text `pocketsve:leader/svgdb-2808`，完整步骤见 [NFC_WRITING.md](NFC_WRITING.md)。原 82 条卡片保留，加上本次扩展共 83 条。
 
 0.1 是功能原型；0.2 按原 APK 的对战组件和准备页重做布局；0.3 加入原始角色语音、操作音效和原版骰子动画。还原范围是主战者准备、对战显示和 NFC 读取界面，并非原应用全部页面。
 
