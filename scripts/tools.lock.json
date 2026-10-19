@@ -1,0 +1,55 @@
+{
+  "reaVersion": "6.7.0",
+  "nodeDirectory": "node/node-v24.22.0-win-x64",
+  "javaDirectory": "java/jdk-21.0.12.1+1",
+  "jadxJar": "downloads/jadx-headless-mcp-0.7.1-all.jar",
+  "apktoolJar": "downloads/apktool_3.0.3.jar",
+  "downloads": [
+    {
+      "name": "Node.js",
+      "version": "24.22.0",
+      "file": "node-v24.22.0-win-x64.zip",
+      "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-win-x64.zip",
+      "algorithm": "SHA256",
+      "hash": "f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3",
+      "extractTo": "node",
+      "probe": "node/node-v24.22.0-win-x64/node.exe"
+    },
+    {
+      "name": "Temurin JDK",
+      "version": "21.0.12.1+1",
+      "file": "OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip",
+      "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip",
+      "algorithm": "SHA256",
+      "hash": "f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8b4e",
+      "extractTo": "java",
+      "probe": "java/jdk-21.0.12.1+1/bin/javac.exe"
+    },
+    {
+      "name": "JADX headless MCP",
+      "version": "0.7.1",
+      "file": "jadx-headless-mcp-0.7.1-all.jar",
+      "url": "https://github.com/1013503897/jadx-headless-mcp/releases/download/v0.7.1/jadx-headless-mcp-0.7.1-all.jar",
+      "algorithm": "SHA256",
+      "hash": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75"
+    },
+    {
+      "name": "Apktool",
+      "version": "3.0.3",
+      "file": "apktool_3.0.3.jar",
+      "url": "https://github.com/iBotPeaches/Apktool/releases/download/v3.0.3/apktool_3.0.3.jar",
+      "algorithm": "SHA256",
+      "hash": "dbf930b076c6b9be08d57c449cacefc3bdd6b71ebd59b3066fc0e1f5b14f9423"
+    },
+    {
+      "name": "Android Platform Tools",
+      "version": "37.0.1",
+      "file": "platform-tools_r37.0.1-win.zip",
+      "url": "https://dl.google.com/android/repository/platform-tools_r37.0.1-win.zip",
+      "algorithm": "SHA1",
+      "hash": "e03e78b1d80b396f1c3358e31251cb31740e1110",
+      "extractTo": "android",
+      "probe": "android/platform-tools/adb.exe"
+    }
+  ]
+}

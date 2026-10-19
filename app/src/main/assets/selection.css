@@ -1,0 +1,50 @@
+@font-face{font-family:PocketOriginalUI;src:url('art/fonts_notoSansCjKscRegularOtf.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+.pocket-selection,.pocket-selection-nfc{--ps-px:.5px;--ps-static-px:.5px;--ps-content-width:100vw;--ps-action-bottom:40px;font-family:PocketOriginalUI,'Noto Sans SC',sans-serif;font-weight:400;color:#fdfcec;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.pocket-selection *,.pocket-selection-nfc *{box-sizing:border-box}
+.pocket-selection button,.pocket-selection-nfc button{display:block;position:relative;min-width:0;min-height:0;padding:0;margin:0;border:0;border-radius:0;background-color:transparent;color:inherit;font:inherit;cursor:pointer;box-shadow:none;text-transform:none;letter-spacing:normal}
+.pocket-selection button:focus-visible,.pocket-selection-nfc button:focus-visible,.ps-extensions summary:focus-visible{outline:1px solid #b9f1ff;outline-offset:2px}
+.pocket-selection{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;background:#081a26 url('art/assets_images_bgTutorialPng.webp') center/cover no-repeat;overflow:hidden}
+.ps-content{position:relative;width:var(--ps-content-width);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ps-header{position:relative;flex:2 1 0;width:100%;display:flex;flex-direction:column;justify-content:center}
+.ps-main{flex:10 1 0;width:100%;display:flex;flex-direction:column;justify-content:center}
+.ps-footer{position:relative;flex:2 1 0;width:100%}
+.ps-role-cards{margin:0 calc(25 * var(--ps-static-px));display:flex;flex-direction:column;justify-content:space-between}
+.ps-panel{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background-repeat:no-repeat;background-size:100% 100%;flex:none}
+.ps-opponent{height:calc(390 * var(--ps-px));margin-bottom:calc(10 * var(--ps-static-px));background-image:url('ui/role_panel_20_red.png')}
+.ps-own{height:calc(500 * var(--ps-px));margin-top:calc(10 * var(--ps-static-px));margin-bottom:calc(10 * var(--ps-static-px));background-image:url('ui/role_panel_20_blue.png')}
+.ps-panel-title{position:absolute;top:0;width:calc(210 * var(--ps-static-px));height:calc(40 * var(--ps-static-px));object-fit:fill}
+.ps-role-row{display:flex;flex-direction:row;justify-content:space-around;align-items:center;width:90%;flex:none}
+.ps-role-row-first{margin-top:calc(20 * var(--ps-static-px))}
+.ps-role-row-second{margin-top:calc(32 * var(--ps-static-px));padding:0 10%}
+.pocket-selection .ps-role-icon{width:calc(120 * var(--ps-px));height:calc(120 * var(--ps-px));flex:none;z-index:10}
+.ps-role-icon img{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.ps-role-icon:active{filter:brightness(1.15)}
+.ps-tip-space{height:calc(70 * var(--ps-px));display:flex;flex-direction:column;justify-content:center;flex:none}
+.ps-tip{display:flex;justify-content:center;align-items:center;align-self:center;width:90%;height:calc(58 * var(--ps-px));font-size:calc(34 * var(--ps-px));line-height:calc(51 * var(--ps-px));background:url('ui/role_panel_07.png') center/100% 100% no-repeat;text-align:center}
+.pocket-selection .ps-image-button,.pocket-selection-nfc .ps-image-button{background-position:center;background-size:100% 100%;background-repeat:no-repeat}
+.pocket-selection .ps-menu{position:relative;top:20.5px;left:calc(34 * var(--ps-static-px));width:calc(83 * var(--ps-px));height:calc(83 * var(--ps-px));background-image:url('ui/role_btn_menu_off.png')}
+.pocket-selection .ps-menu:active{background-image:url('ui/role_btn_menu_on.png')}
+.pocket-selection .ps-scan{width:calc(296 * var(--ps-px));height:calc(79 * var(--ps-px));margin-top:calc(50 * var(--ps-px));background-image:url('ui/role_btn_input_off.png');flex:none;z-index:10}
+.pocket-selection .ps-scan:active{background-image:url('ui/role_btn_input_on.png')}
+.ps-scan-label{display:block;padding-left:calc(40 * var(--ps-px));font-size:calc(34 * var(--ps-px));line-height:calc(49 * var(--ps-px));text-align:center}
+.pocket-selection .ps-start{position:absolute;right:calc(30 * var(--ps-px));bottom:var(--ps-action-bottom);width:calc(228 * var(--ps-static-px));height:calc(79 * var(--ps-static-px));background-image:url('ui/role_btn_start_02_off.png');z-index:10;font-size:calc(34 * var(--ps-px));line-height:calc(49 * var(--ps-px))}
+.pocket-selection .ps-start:active{background-image:url('ui/role_btn_start_02_on.png')}
+.ps-leader-thumbnail{display:block;width:calc(680 * var(--ps-px));height:calc(340 * var(--ps-px));margin-top:calc(20 * var(--ps-px));object-fit:fill}
+.ps-skin-actions{display:flex;flex-direction:row;justify-content:space-around;align-items:center;width:calc(650 * var(--ps-px));height:calc(79 * var(--ps-static-px));margin-top:calc(10 * var(--ps-px));flex:none;z-index:10}
+.pocket-selection .ps-skin-actions .ps-scan{width:calc(298 * var(--ps-px));height:100%;margin:0}
+.pocket-selection .ps-reset-skin{width:calc(298 * var(--ps-px));height:100%;font-size:calc(34 * var(--ps-px));line-height:calc(49 * var(--ps-px))}
+.pocket-selection .ps-blue,.pocket-selection-nfc .ps-blue{background-image:url('ui/btn_common_02_m_off.png')}
+.pocket-selection .ps-blue:active,.pocket-selection-nfc .ps-blue:active{background-image:url('ui/btn_common_02_m_on.png')}
+/* The folded skin entry is the host's requested extension, not an original screen control. */
+.ps-extensions{position:absolute;left:calc(30 * var(--ps-px));bottom:var(--ps-action-bottom);font-size:calc(22 * var(--ps-static-px));color:#b7c9d1;z-index:12}
+.ps-extensions summary{cursor:pointer;padding:calc(8 * var(--ps-static-px));list-style-position:inside}
+.pocket-selection .ps-extension-entry{display:inline-block;padding:calc(8 * var(--ps-static-px)) calc(12 * var(--ps-static-px));font-size:inherit;color:#fdfcec}
+.pocket-selection-nfc{position:fixed;inset:0;z-index:1100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5)}
+.ps-nfc-box{position:relative;width:calc(700 * var(--ps-static-px));height:calc(1200 * var(--ps-static-px));display:flex;flex-direction:column;background:url('ui/selection_frame_02.png') center/100% 100% no-repeat}
+.ps-nfc-header,.ps-nfc-footer{position:relative;width:100%;display:flex;align-items:center;justify-content:center;flex:2 1 0}
+.ps-nfc-header:after,.ps-nfc-body:after{content:'';position:absolute;bottom:0;width:calc(664 * var(--ps-static-px));height:calc(10 * var(--ps-static-px));background:url('ui/selection_line_01.png') center/100% 100% no-repeat}
+.ps-nfc-title{font-size:calc(38 * var(--ps-static-px));padding:calc(5 * var(--ps-static-px)) 4% 0;color:#f9f9f9;text-align:center}
+.ps-nfc-body{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:0 calc(30 * var(--ps-static-px));flex:10 1 0}
+.ps-nfc-illustration{display:block;flex:none;width:calc(616 * var(--ps-static-px));height:calc(728 * var(--ps-static-px));object-fit:fill}
+.ps-nfc-instruction{margin:0;white-space:pre-line;text-align:center;font-size:calc(30 * var(--ps-static-px));line-height:normal;color:#f9f9f9}
+.pocket-selection-nfc .ps-nfc-close{width:calc(301 * var(--ps-static-px));height:calc(52 * var(--ps-static-px));font-size:calc(26 * var(--ps-static-px));line-height:calc(37 * var(--ps-static-px))}

@@ -1,0 +1,9 @@
+.tools/
+build/
+dist/
+.gradle/
+local.properties
+apks/*
+analysis/*
+!apks/.gitkeep
+!analysis/.gitkeep
