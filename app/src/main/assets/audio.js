@@ -4,7 +4,7 @@
   let enabled = true;
   try { enabled = localStorage.getItem(storageKey) !== 'off'; } catch (_) {}
   const channels = {};
-  for (const name of ['voice', 'effect']) {
+  for (const name of ['voice', 'effect', 'diceStart', 'diceAnim']) {
     const audio = document.createElement('audio');
     audio.preload = 'none';
     audio.dataset.channel = name;
@@ -44,7 +44,7 @@
       const entry = window.POCKET_AUDIO?.leaders?.[String(id)];
       return play(event === 'emote' ? entry?.emotes?.[String(icon)] : entry?.[event], 'voice');
     },
-    playEffect(name) { return play(window.POCKET_AUDIO?.effects?.[name], 'effect'); },
+    playEffect(name) { return play(window.POCKET_AUDIO?.effects?.[name], name === 'diceStart' || name === 'diceAnim' ? name : 'effect'); },
     stop,
     isEnabled() { return enabled; },
     setEnabled(value) {

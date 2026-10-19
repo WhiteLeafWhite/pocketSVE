@@ -2,7 +2,7 @@
 
 已根据 `apks/kdyzs_1.2.0.apk` 重建离线对战界面、主战者选择和 NFC 原卡读取流程。
 
-- 最新安装包：`dist/pocketSVE-v0.2.0-debug.apk`（按原版组件布局重做）。
+- 最新安装包：`dist/pocketSVE-v0.3.0-debug.apk`（原版布局、角色语音和骰子动画）。
 - [功能说明、资源覆盖与验证范围](docs/REPLICA.md)。
 - [构建与 NFC 协议测试](docs/BUILD_ANDROID.md)。
 - 前端与原生源码：`app/src/main`。
@@ -17,7 +17,7 @@ node --test tests\core.test.cjs
 .\scripts\Test-NfcProtocol.ps1
 ```
 
-0.2.0 已在 Android 15 模拟器安装运行；当前尚未连接手机，实体 NFC 卡和 Android 实机运行待验证。
+0.3.0 已在 Android 15 模拟器安装运行并验证语音播放；当前尚未连接手机，实体 NFC 卡和 Android 实机运行待验证。
 
 ## Android 逆向环境
 

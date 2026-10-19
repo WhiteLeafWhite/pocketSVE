@@ -1,0 +1,17 @@
+/* Original GameDice #22922: opacity .2; Dice P(900); result and OK are original artwork. */
+.pocket-dice{--pd-px:.5px;--pd-static-px:.5px;position:fixed;inset:0;z-index:1100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.pocket-dice *{box-sizing:border-box}
+.pd-scene{position:relative;width:calc(750 * var(--pd-static-px));height:100%}
+.pd-roll{position:absolute;left:calc(80 * var(--pd-px));bottom:0;width:calc(900 * var(--pd-px));height:calc(900 * var(--pd-px));pointer-events:none}
+.pd-roll svg,.pd-glow svg{display:block;width:100%;height:100%;overflow:visible}
+.pd-confirm-shell{position:absolute;width:100%;height:calc(48 * var(--pd-px));bottom:calc(100 * var(--pd-px));display:flex;flex-direction:row;justify-content:center}
+.pd-confirm-shell[hidden]{display:none}
+.pd-confirm-stage{position:absolute;left:calc(140 * var(--pd-px));bottom:calc(-130 * var(--pd-px));width:calc(300 * var(--pd-px));height:calc(300 * var(--pd-px))}
+.pd-wide .pd-confirm-stage{left:calc(200 * var(--pd-px));bottom:calc(-120 * var(--pd-px))}
+.pd-glow{position:absolute;inset:0;pointer-events:none}
+.pocket-dice .pd-ok{position:absolute;left:calc(106 * var(--pd-px));top:calc(126 * var(--pd-px));width:calc(88 * var(--pd-px));height:calc(48 * var(--pd-px));padding:0;margin:0;min-width:0;min-height:0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
+.pd-ok img{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.pd-ok:disabled{opacity:1;cursor:default}
+.pd-ok:focus-visible{outline:1px solid #caf9ff;outline-offset:4px}
+.pd-live{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.pocket-dice .pd-failure{position:absolute;left:10%;right:10%;top:45%;padding:15px;border:1px solid #728c99;background:#142b38;color:#fdfcec;font:16px sans-serif;cursor:pointer}

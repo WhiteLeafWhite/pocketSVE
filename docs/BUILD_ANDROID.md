@@ -1,6 +1,6 @@
 # 构建 PocketSVE Android APK
 
-当前版本 0.2.0，按原 APK 的 portrait 方向运行。交付文件为 `dist/pocketSVE-v0.2.0-debug.apk`；使用 `-OutputPath` 可保留版本化产物，默认输出仍为 `dist/pocketSVE-debug.apk`。
+当前版本 0.3.0，按原 APK 的 portrait 方向运行。交付文件为 `dist/pocketSVE-v0.3.0-debug.apk`；使用 `-OutputPath` 可保留版本化产物，默认输出仍为 `dist/pocketSVE-debug.apk`。
 
 在项目根目录执行：
 
@@ -8,6 +8,8 @@
 .\scripts\Test-NfcProtocol.ps1
 .\scripts\Build-Android.ps1
 ```
+
+本版媒体回归检查使用已配置的 Node.js 和 Edge：`node scripts/Test-Media.mjs`；原对战/NFC 页面检查使用 `node scripts/Test-Ui.mjs`。前者实际解码播放本地音频并检查时间前进，验证骰子动画及暂停清理，不需要原应用账号或联网。
 
 输出文件为 `dist/pocketSVE-debug.apk`。这是调试签名版本，包名 `io.pocketsve.app`，最低 Android 6.0（API 23），目标 API 35。NFC 硬件为可选项；没有 NFC 的设备仍可操作对战界面并手动选择主战者。
 
@@ -29,4 +31,4 @@
 
 `Test-NfcProtocol.ps1` 编译实际生产 Java 解码方法，使用 Python 独立实现生成的合成测试向量，验证读取页拼接、PWD_AUTH 密码派生、三层 AES、卡牌编号和错误 UID 拒绝。测试中仅将 Android Base64 API 替换为 JDK 等价实现，测试目录不会被打入 APK。
 
-0.2.0 已在 Android 15（API 35、x86_64）模拟器安装运行，实际 WebView 页面和无 NFC 设备提示正常。当前没有连接 NFC 安卓真机；模拟器及离线测试不代表实体卡与手机 NFC 天线验证，连接设备后仍需检查实体卡扫描和真机显示。
+0.3.0 已在 Android 15（API 35、x86_64）模拟器安装运行，实际 WebView 页面和语音播放正常；0.2.0 已验证无 NFC 设备提示。当前没有连接 NFC 安卓真机；模拟器及离线测试不代表实体卡与手机 NFC 天线验证，连接设备后仍需检查实体卡扫描和真机显示。

@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -48,6 +49,7 @@ public final class MainActivity extends Activity implements NfcAdapter.ReaderCal
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         webView = new WebView(this);
         webView.setBackgroundColor(Color.rgb(16, 26, 30));
@@ -60,7 +62,9 @@ public final class MainActivity extends Activity implements NfcAdapter.ReaderCal
         settings.setAllowUniversalAccessFromFileURLs(false);
         settings.setBlockNetworkLoads(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setMediaPlaybackRequiresUserGesture(true);
+        // NFC completion and animation callbacks occur after the initiating tap.
+        // Playback remains confined to bundled local media by the request policy.
+        settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
         WebView.setWebContentsDebuggingEnabled((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);

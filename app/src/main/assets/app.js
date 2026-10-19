@@ -8,7 +8,7 @@
   const storageKey = 'pocketsve.match.v1';
   let state, modalKind = '', activeSide = 'you', activeClass = '', query = '', lastFocus;
   let scanTarget = 'you', pendingBinding = '', lastTag = null, nativeStatus = null;
-  let scanUi = null, lastStartAt = 0;
+  let scanUi = null, lastStartAt = -Infinity, scanVoiceTimer;
   let emoteLeader = '', battleMessageTimer;
   let undo = [], log = [], toastTimer, repeatTimer, repeatInterval, toastMessage = '';
   let bindings = {};
@@ -50,6 +50,7 @@
     if (state.muted) return;
     try { window.PocketNfc?.vibrate(); } catch (_) {}
   }
+  function effect(name) { window.PocketAudio?.playEffect(name); }
   function gameToast(message) {
     clearTimeout(battleMessageTimer);
     $('battle-message').textContent = message || '';
@@ -68,7 +69,7 @@
     const items = lines?.emotes || [];
     $('emote-region').classList.toggle('many', items.length > 4);
     const tray = $('emote-tray');
-    tray.replaceChildren(node('button', { className: 'emote-close', 'aria-label': '收起表情', onclick: () => setEmotesOpen(false) }, [node('img', { src: 'ui/emote_btn_emote_menu_l_off.png', alt: '' })]));
+    tray.replaceChildren(node('button', { className: 'emote-close', 'aria-label': '收起表情', onclick: () => { effect('emoteClose'); setEmotesOpen(false); } }, [node('img', { src: 'ui/emote_btn_emote_menu_l_off.png', alt: '' })]));
     for (const item of items) tray.append(node('button', { 'aria-label': item.text || '表情' + item.icon, onclick: () => { gameToast(item.text); window.PocketAudio?.playLeader(id, 'emote', item.icon); } },
       [node('img', { src: 'ui/emote_btn_emote_0' + item.icon + '_off.png', alt: '' })]));
     setEmotesOpen(false);
@@ -76,7 +77,10 @@
   function commit(action, message, remember = true) {
     const next = C.transition(state, action);
     if (JSON.stringify(state) === JSON.stringify(next)) return;
-    if (action.type === 'reset' || next.players.you.leaderId !== state.players.you.leaderId) window.PocketAudio?.stop('voice');
+    if (action.type === 'reset' || next.players.you.leaderId !== state.players.you.leaderId) {
+      clearTimeout(scanVoiceTimer);
+      window.PocketAudio?.stop('voice');
+    }
     if (remember) {
       undo.push(JSON.stringify(state));
       if (undo.length > 40) undo.shift();
@@ -149,6 +153,7 @@
         onclick: () => {
           if (number > state.maxPp) return;
           commit({ type: 'pp', value: state.pp === number ? number - 1 : number }, '调整可用 PP');
+          effect('ppChange');
         },
       }, [node('img', { className: 'pip-base', src: 'ui/battle_pp_base.png', alt: '' }),
         ...(number <= state.maxPp ? [node('img', { src: number <= state.pp ? 'ui/battle_icon_pp_on.png' : 'ui/battle_icon_pp_off.png', alt: '' })] : []), node('span', { text: number })]);
@@ -186,6 +191,7 @@
   }
   function selectLeader(id) {
     if (!byId.has(String(id))) return;
+    effect('select');
     const binding = pendingBinding;
     commit({ type: 'leader', side: activeSide, id: String(id) }, titleFor(activeSide) + '选择 ' + safeLeaderName(byId.get(String(id))));
     if (binding) {
@@ -241,6 +247,7 @@
     showLeaderGrid();
   }
   function openMenu() {
+    effect('menu');
     showModal('对战菜单', 'menu');
     const list = node('div', { className: 'menu-list' });
     for (const [name, action] of [
@@ -250,16 +257,17 @@
     $('modal-body').append(list, footer('返回对战', closeModal));
   }
   function openPreparation() {
+    clearTimeout(scanVoiceTimer);
     window.PocketAudio?.stop();
     clearTimeout(toastTimer); $('toast').hidden = true;
     gameToast('');
     closeModal();
     window.PocketSelection.open({ catalog, state,
-      onSelect: (side, id) => commit({ type: 'leader', side, id }, titleFor(side) + '选择主战者'),
+      onSelect: (side, id) => { effect('select'); commit({ type: 'leader', side, id }, titleFor(side) + '选择主战者'); },
       onScan: side => openScan(side),
       onSkins: side => { window.PocketSelection.close(); openLeaders(side); },
       onMenu: openMenu,
-      onStart: () => { commit({ type: 'reset' }, '开始对战'); window.PocketSelection.close(); },
+      onStart: () => { commit({ type: 'reset' }, '开始对战'); window.PocketSelection.close(); effect('buttonLarge'); window.PocketAudio?.playLeader(state.players.you.leaderId, 'enter'); },
       onClose: () => window.PocketSelection.close(),
     });
   }
@@ -338,6 +346,7 @@
     if (settings) settings.hidden = !status.available || !!status.enabled;
   }
   function openScan(side) {
+    clearTimeout(scanVoiceTimer);
     scanTarget = side || 'you';
     lastTag = null;
     closeModal();
@@ -358,6 +367,7 @@
       closeModal();
       toast('已读取：' + byId.get(result.id).name + (byId.get(result.id).available ? '' : '（当前资源无立绘）'));
       vibrate();
+      scanVoiceTimer = setTimeout(() => window.PocketAudio?.playLeader(result.id, 'scan'), 300);
       return;
     }
     stopScan();
@@ -396,12 +406,13 @@
     const adjust = () => {
       const side = button.dataset.life, delta = Number(button.dataset.delta);
       commit({ type: 'hp', side, delta }, titleFor(side) + '生命 ' + (delta > 0 ? '+' : '') + delta);
+      effect('life');
       vibrate();
     };
     button.addEventListener('click', adjust);
   }
   $('menu-button').addEventListener('click', openMenu);
-  $('reset-button').addEventListener('click', () => { commit({ type: 'reset' }, '重置对战'); setEmotesOpen(false); gameToast(''); });
+  $('reset-button').addEventListener('click', () => { commit({ type: 'reset' }, '重置对战'); effect('reload'); setEmotesOpen(false); gameToast(''); });
   $('modal-close').addEventListener('click', closeModal);
   $('modal').addEventListener('click', event => { if (event.target === $('modal')) closeModal(); });
   for (const button of document.querySelectorAll('[data-select]')) button.addEventListener('click', () => openLeaders(button.dataset.select));
@@ -411,14 +422,22 @@
     lastStartAt = now;
     commit({ type: 'startTurn' }, '开始我方第 ' + (state.turn + 1) + ' 回合');
     gameToast(window.POCKET_LINES?.[state.players.you.leaderId]?.start);
+    effect('start');
     window.PocketAudio?.playLeader(state.players.you.leaderId, 'start');
     vibrate();
   });
-  $('end-turn-button').addEventListener('click', () => { commit({ type: 'endTurn' }, '回合结束'); gameToast(window.POCKET_LINES?.[state.players.you.leaderId]?.end); window.PocketAudio?.playLeader(state.players.you.leaderId, 'end'); });
-  $('max-pp-minus').addEventListener('click', () => commit({ type: 'maxPp', value: state.maxPp - 1 }, 'PP 上限 -1'));
-  $('max-pp-plus').addEventListener('click', () => commit({ type: 'maxPp', value: state.maxPp + 1 }, 'PP 上限 +1'));
-  $('pp-minus').addEventListener('click', () => commit({ type: 'pp', value: state.pp - 1 }, '可用 PP -1'));
-  $('pp-plus').addEventListener('click', () => commit({ type: 'pp', value: state.pp + 1 }, '可用 PP +1'));
+  $('end-turn-button').addEventListener('click', () => { commit({ type: 'endTurn' }, '回合结束'); effect('end'); gameToast(window.POCKET_LINES?.[state.players.you.leaderId]?.end); window.PocketAudio?.playLeader(state.players.you.leaderId, 'end'); });
+  function adjustPp(type, delta) {
+    const key = type === 'maxPp' ? 'maxPp' : 'pp';
+    const value = state[key] + delta;
+    if (value < 0 || value > (type === 'maxPp' ? 10 : state.maxPp)) { effect('cancel'); return; }
+    commit({ type, value }, (type === 'maxPp' ? 'PP 上限 ' : '可用 PP ') + (delta > 0 ? '+1' : '-1'));
+    effect(type === 'maxPp' ? 'pp' : 'ppChange');
+  }
+  $('max-pp-minus').addEventListener('click', () => adjustPp('maxPp', -1));
+  $('max-pp-plus').addEventListener('click', () => adjustPp('maxPp', 1));
+  $('pp-minus').addEventListener('click', () => adjustPp('pp', -1));
+  $('pp-plus').addEventListener('click', () => adjustPp('pp', 1));
   $('dice-button').addEventListener('click', rollDice);
   for (const button of document.querySelectorAll('.original-button')) {
     const img = button.querySelector('img');
@@ -427,11 +446,18 @@
     button.addEventListener('pointerdown', () => { img.src = on; });
     for (const event of ['pointerup', 'pointerleave', 'pointercancel', 'blur']) button.addEventListener(event, () => { img.src = off; });
   }
-  $('emote-button').addEventListener('click', () => setEmotesOpen(true));
+  $('emote-button').addEventListener('click', () => { effect('emoteOpen'); setEmotesOpen(true); });
   window.addEventListener('resize', fit);
   window.addEventListener('blur', stopRepeat);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stopRepeat(); });
+  function pauseMedia() { stopRepeat(); clearTimeout(scanVoiceTimer); window.PocketDice?.close('background'); }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseMedia(); });
+  window.addEventListener('pocket:pause', pauseMedia);
   document.addEventListener('keydown', event => {
+    if (window.PocketDice?.isOpen()) {
+      if (event.key === 'Escape') { event.preventDefault(); window.PocketDice.close('back'); }
+      if (event.key === 'Tab') { event.preventDefault(); document.querySelector('.pocket-dice button:not([disabled])')?.focus(); }
+      return;
+    }
     if (event.key === 'Escape' && modalKind) { event.preventDefault(); closeModal(); }
     if (event.key === 'Tab' && modalKind) {
       const focusable = [...(scanUi || $('modal')).querySelectorAll('button:not([disabled]),input')].filter(element => element.offsetParent !== null);

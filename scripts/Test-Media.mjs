@@ -1,0 +1,85 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
+import assert from 'node:assert/strict';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const require = createRequire(path.join(root, '.tools/rea/package.json'));
+const { chromium } = require('playwright-core');
+const output = path.join(root, 'analysis/preview-v3');
+fs.mkdirSync(output, { recursive: true });
+const browser = await chromium.launch({ channel: 'msedge', headless: true, args: ['--mute-audio'] });
+const checks = [], errors = [];
+try {
+  const page = await browser.newPage({ viewport: { width: 412, height: 915 } });
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  await page.goto(pathToFileURL(path.join(root, 'app/src/main/assets/index.html')).href);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator('.ps-own').getByRole('button', { name: '精灵', exact: true }).click();
+  await page.getByRole('button', { name: '开始', exact: true }).click();
+  for (const [button, event] of [['回合开始', 'start'], ['回合结束', 'end']]) {
+    await page.getByRole('button', { name: button, exact: true }).click();
+    await page.waitForFunction(() => {
+      const { voice } = window.PocketAudio.getState();
+      return !voice.paused && voice.currentTime > 0.05 && voice.duration > 0;
+    });
+    const audioState = await page.evaluate(() => window.PocketAudio.getState());
+    assert.equal(audioState.voice.error, null);
+    assert.equal(audioState.voice.path, await page.evaluate(event => window.POCKET_AUDIO.leaders['100001'][event], event));
+  }
+  await page.getByRole('button', { name: '表情', exact: true }).click();
+  await page.locator('#emote-tray button').nth(1).click();
+  await page.waitForFunction(() => window.PocketAudio.getState().voice.currentTime > .05);
+  const voice = await page.evaluate(() => window.PocketAudio.getState().voice);
+  assert.equal(voice.path, await page.evaluate(() => window.POCKET_AUDIO.leaders['100001'].emotes['1']));
+  assert.equal(await page.locator('audio[data-channel="voice"]').count(), 1);
+  assert.equal(voice.error, null);
+  checks.push('Actual local audio playback: start/end/emote advance currentTime with no decoder errors; one voice channel');
+  await page.getByRole('button', { name: '打开对战菜单', exact: true }).click();
+  await page.getByRole('button', { name: '对战设置', exact: false }).click();
+  await page.getByRole('button', { name: '切换语音与音效', exact: true }).click();
+  assert.equal(await page.evaluate(() => window.PocketAudio.getState().voice.paused), true);
+  await page.reload();
+  assert.equal(await page.evaluate(() => window.PocketAudio.isEnabled()), false);
+  await page.getByRole('button', { name: '开始', exact: true }).click();
+  await page.getByRole('button', { name: '回合开始', exact: true }).click();
+  assert.equal(await page.evaluate(() => window.PocketAudio.getState().voice.paused), true);
+  await page.getByRole('button', { name: '打开对战菜单', exact: true }).click();
+  await page.getByRole('button', { name: '对战设置', exact: false }).click();
+  await page.getByRole('button', { name: '切换语音与音效', exact: true }).click();
+  await page.getByRole('button', { name: '完成', exact: true }).click();
+  await page.getByRole('button', { name: '回合结束', exact: true }).click();
+  await page.waitForFunction(() => !window.PocketAudio.getState().voice.paused);
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('pocket:pause')));
+  assert.equal(await page.evaluate(() => window.PocketAudio.getState().voice.paused), true);
+  checks.push('Sound setting stops playback immediately, survives reload, and native pause event stops audio');
+
+  const matchBefore = await page.evaluate(() => localStorage.getItem('pocketsve.match.v1'));
+  await page.getByRole('button', { name: '掷骰子', exact: true }).click();
+  assert.equal(await page.evaluate(() => window.PocketDice.isOpen()), true);
+  await page.screenshot({ path: path.join(output, 'dice-start.png') });
+  await page.waitForTimeout(550);
+  await page.screenshot({ path: path.join(output, 'dice-rolling.png') });
+  await page.waitForFunction(() => window.PocketDice.getState().canClose, null, { timeout: 15000 });
+  await page.screenshot({ path: path.join(output, 'dice-result.png') });
+  const dice = await page.evaluate(() => window.PocketDice.getState());
+  assert.ok(dice.result >= 1 && dice.result <= 6);
+  assert.equal(await page.evaluate(() => localStorage.getItem('pocketsve.match.v1')), matchBefore);
+  await page.getByRole('button', { name: '确定骰子结果', exact: true }).click();
+  assert.equal(await page.evaluate(() => window.PocketDice.isOpen()), false);
+  checks.push('Original dice animation completes, result is 1–6, confirm closes it, and match state is unchanged');
+  await page.getByRole('button', { name: '掷骰子', exact: true }).click();
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('pocket:pause')));
+  assert.equal(await page.evaluate(() => window.PocketDice.isOpen()), false);
+  await page.waitForTimeout(1700);
+  const paused = await page.evaluate(() => window.PocketAudio.getState());
+  assert.ok(['voice', 'effect', 'diceStart', 'diceAnim'].every(channel => paused[channel].paused));
+  assert.equal(await page.locator('.pocket-dice').count(), 0);
+  checks.push('Native pause cancels in-flight dice and all audio; no delayed overlay or sound reappears');
+  assert.deepEqual(errors, []);
+  fs.writeFileSync(path.join(output, 'media-checks.json'), JSON.stringify({ checks, errors, voice, dice }, null, 2));
+  console.log(JSON.stringify({ passed: checks.length, checks }, null, 2));
+} finally { await browser.close(); }
